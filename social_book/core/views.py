@@ -14,7 +14,7 @@ def index(request):
 
 
 @login_required(login_url='signin')
-def setting(request):
+def settings(request):
     return render(request, 'setting.html')
 
 
@@ -37,12 +37,15 @@ def signup(request):
                 user.save()
 
                 # log user in adn redirect to settings page
-                # create a profile object for the new user
+                user_login = auth.authenticate(username=username, password=password)
+                auth.login(request, user_login)
 
+                # create a profile object for the new user
                 user_model = User.objects.get(username=username)
                 new_profile = Profile.objects.create(user=user_model, id_user=user_model.id)
                 new_profile.save()
-                return redirect('signup')
+                return redirect('settings')
+                # return redirect('signup')
 
         else:
             messages.info(request, 'Password Not Matching')
